@@ -29,7 +29,7 @@
             <p class="text-xs text-slate-500 mt-2">One-time payment. Lifetime access.</p>
         </div>
 
-        <button onclick="trackAndOpenModal('Page_View_Click')" class="w-full sm:w-auto bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-slate-950 font-bold text-lg px-8 py-4 rounded-xl shadow-lg shadow-orange-500/20 transform hover:-translate-y-0.5 transition active:translate-y-0">
+        <button onclick="openModalOnly()" class="w-full sm:w-auto bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-slate-950 font-bold text-lg px-8 py-4 rounded-xl shadow-lg shadow-orange-500/20 transform hover:-translate-y-0.5 transition active:translate-y-0">
             BUY NOW — $7
         </button>
     </header>
@@ -72,7 +72,7 @@
     <section class="max-w-4xl mx-auto px-6 py-20 text-center">
         <h3 class="text-2xl md:text-3xl font-bold mb-4">Ready to change your digital trajectory?</h3>
         <p class="text-slate-400 mb-8 max-w-md mx-auto">Get instant access to the framework today for the price of a coffee.</p>
-        <button onclick="trackAndOpenModal('Bottom_CTA_Click')" class="w-full sm:w-auto bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white font-bold text-lg px-8 py-4 rounded-xl transition">
+        <button onclick="openModalOnly()" class="w-full sm:w-auto bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white font-bold text-lg px-8 py-4 rounded-xl transition">
             INSTANT ACCESS FOR $7
         </button>
     </section>
@@ -89,26 +89,45 @@
                 <p class="my-4 text-slate-300 leading-relaxed text-sm">
                     We are currently finalizing our local automated payment gateways. Because you are one of our first action-takers and showed genuine intent to invest in your growth, you get the entire e-book <strong>100% Free</strong> today instead of $7.
                 </p>
-                <!-- Direct Google Drive Download -->
-                <a href="https://drive.google.com/uc?export=download&id=1n5r_bIeR0xl1TosMkXgtzy3NqgVdhIwN" target="_blank" class="block text-center w-full bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-slate-950 font-bold py-3 rounded-xl shadow-lg mt-6 transition">
+                
+                <!-- Direct Download Link tracking actual downloads -->
+                <a href="https://drive.google.com/uc?export=download&id=1n5r_bIeR0xl1TosMkXgtzy3NqgVdhIwN" 
+                   target="_blank" 
+                   onclick="trackClick()"
+                   class="block text-center w-full bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-slate-950 font-bold py-3 rounded-xl shadow-lg mt-6 transition">
                     Download "The Algorithm Code.pdf"
                 </a>
             </div>
         </div>
     </div>
 
-    <!-- Background script to record data silently straight into your Google Drive Sheet -->
+    <!-- Secret Stats Dashboard Overlay Menu -->
+    <div id="adminPanel" class="hidden fixed bottom-4 right-4 bg-slate-800 border border-slate-700 p-4 rounded-xl shadow-2xl z-50 text-xs">
+        <p class="font-bold text-amber-400 mb-1">Live Global Stats</p>
+        <p>Total Views: <span id="viewCount" class="text-white font-mono">Loading...</span></p>
+        <p>Total Downloads: <span id="downloadCount" class="text-white font-mono">Loading...</span></p>
+    </div>
+
+    <!-- Free Global API Tracking Logic -->
     <script>
-        // Automatically track a Page view when they load the site
+        // ⚠️ CHANGE THIS STRiNG TO ANYTHING UNIQUE TO PROTECT YOUR DATABASE
+        const uniqueKey = "viral_tracker_croco2026"; 
+
+        // 1. Log Global Views on Load
         window.addEventListener('DOMContentLoaded', () => {
-            sendToMyGoogleDrive('Page_View_Load');
+            fetch(`https://api.countapi.xyz/hit/${uniqueKey}/views`)
+                .then(res => res.json())
+                .then(data => { if(document.getElementById('viewCount')) document.getElementById('viewCount').innerText = data.value; });
+                
+            // Fetch download count to populate the display menu
+            fetch(`https://api.countapi.xyz/get/${uniqueKey}/downloads`)
+                .then(res => res.json())
+                .then(data => { if(document.getElementById('downloadCount')) document.getElementById('downloadCount').innerText = data.value || 0; })
+                .catch(() => { if(document.getElementById('downloadCount')) document.getElementById('downloadCount').innerText = 0; });
         });
 
-        function trackAndOpenModal(buttonType) {
-            // Send the click event to your Google sheet data logs
-            sendToMyGoogleDrive(buttonType);
-
-            // Open the popup modal
+        // 2. Open Modal Logic
+        function openModalOnly() {
             const modal = document.getElementById('cryptoModal');
             modal.classList.remove('opacity-0', 'pointer-events-none');
             modal.querySelector('.modal-container').classList.remove('scale-95');
@@ -116,11 +135,26 @@
             document.body.classList.add('modal-active');
         }
 
-        function sendToMyGoogleDrive(statusValue) {
-            const formBaseUrl = "https://docs.google.com/forms/d/e/1FAIpQLScq17Ttan8Gcmv7Ha_0-2n-z54e1AU0OhX_i5F10mrqq9u9ig/formResponse?entry.1015208779=";
-            const finalTrackingUrl = formBaseUrl + encodeURIComponent(statusValue);
-            navigator.sendBeacon(finalTrackingUrl);
+        // 3. Log Global Downloads on Final Click
+        function trackClick() {
+            fetch(`https://api.countapi.xyz/hit/${uniqueKey}/downloads`)
+                .then(res => res.json())
+                .then(data => { if(document.getElementById('downloadCount')) document.getElementById('downloadCount').innerText = data.value; });
         }
+
+        // 4. Secret Dashboard Gesture: Quick triple-tap on the background toggles the overlay panel
+        let tapCount = 0;
+        window.addEventListener('click', (e) => {
+            if (e.target.tagName === 'BODY' || e.target.tagName === 'HEADER' || e.target.tagName === 'SECTION') {
+                tapCount++;
+                if (tapCount === 3) {
+                    const panel = document.getElementById('adminPanel');
+                    panel.classList.toggle('hidden');
+                    tapCount = 0;
+                }
+                setTimeout(() => { tapCount = 0; }, 1000);
+            }
+        });
     </script>
 </body>
 </html>
