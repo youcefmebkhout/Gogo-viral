@@ -1,160 +1,402 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Go Viral or Go Back Home</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        .modal { transition: opacity 0.25s ease; }
-        body.modal-active { overflow: hidden; }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Go Viral or Go Back Home</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0a0a0a;
+      --surface: #111111;
+      --border: #1e1e1e;
+      --accent: #ff3c3c;
+      --accent2: #ff7b00;
+      --text: #f0f0f0;
+      --muted: #888;
+      --card: #141414;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      line-height: 1.6;
+    }
+
+    /* â”€â”€ HERO â”€â”€ */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 60px 24px 40px;
+      background: radial-gradient(ellipse at 50% 0%, #1a0505 0%, #0a0a0a 60%);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -80px; left: 50%;
+      transform: translateX(-50%);
+      width: 600px; height: 300px;
+      background: radial-gradient(ellipse, rgba(255,60,60,0.12) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .badge {
+      display: inline-block;
+      background: rgba(255,60,60,0.12);
+      border: 1px solid rgba(255,60,60,0.3);
+      color: var(--accent);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 6px 14px;
+      border-radius: 100px;
+      margin-bottom: 28px;
+    }
+
+    h1 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(2.4rem, 7vw, 4.4rem);
+      font-weight: 800;
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+      max-width: 720px;
+      margin-bottom: 20px;
+    }
+
+    h1 span {
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-sub {
+      color: var(--muted);
+      font-size: 1.05rem;
+      max-width: 480px;
+      margin-bottom: 36px;
+    }
+
+    .price-block {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      justify-content: center;
+      margin-bottom: 28px;
+    }
+
+    .price-old {
+      color: var(--muted);
+      font-size: 1rem;
+      text-decoration: line-through;
+    }
+
+    .price-new {
+      font-family: 'Syne', sans-serif;
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--accent);
+    }
+
+    .cta-btn {
+      display: inline-block;
+      background: linear-gradient(135deg, var(--accent), #cc1f1f);
+      color: #fff;
+      font-family: 'Syne', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      padding: 16px 36px;
+      border-radius: 8px;
+      text-decoration: none;
+      transition: opacity 0.2s, transform 0.15s;
+      box-shadow: 0 4px 24px rgba(255,60,60,0.3);
+    }
+
+    .cta-btn:hover { opacity: 0.9; transform: translateY(-2px); }
+    .cta-btn:active { transform: translateY(0); }
+
+    /* â”€â”€ STATS BAR â”€â”€ */
+    .stats-bar {
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      padding: 20px 24px;
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      flex-wrap: wrap;
+    }
+
+    .stat {
+      text-align: center;
+    }
+
+    .stat-num {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: var(--accent);
+    }
+
+    .stat-label {
+      font-size: 0.75rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    /* â”€â”€ FEATURES â”€â”€ */
+    .section {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 60px 24px;
+    }
+
+    .section-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.6rem;
+      font-weight: 800;
+      margin-bottom: 32px;
+      text-align: center;
+    }
+
+    .features {
+      display: grid;
+      gap: 16px;
+    }
+
+    .feature-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px 24px;
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+    }
+
+    .feature-icon {
+      font-size: 1.6rem;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .feature-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .feature-desc {
+      color: var(--muted);
+      font-size: 0.88rem;
+    }
+
+    /* â”€â”€ FREE OFFER CARD â”€â”€ */
+    .offer-card {
+      background: linear-gradient(135deg, #1a0505, #110500);
+      border: 1px solid rgba(255,60,60,0.25);
+      border-radius: 14px;
+      padding: 36px 28px;
+      text-align: center;
+      max-width: 540px;
+      margin: 0 auto 60px;
+    }
+
+    .offer-badge {
+      display: inline-block;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      color: #fff;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 5px 12px;
+      border-radius: 100px;
+      margin-bottom: 16px;
+    }
+
+    .offer-card h2 {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.4rem;
+      font-weight: 800;
+      margin-bottom: 10px;
+    }
+
+    .offer-card p {
+      color: var(--muted);
+      font-size: 0.9rem;
+      margin-bottom: 28px;
+      line-height: 1.7;
+    }
+
+    .download-btn {
+      display: inline-block;
+      background: linear-gradient(135deg, var(--accent), #cc1f1f);
+      color: #fff;
+      font-family: 'Syne', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      padding: 15px 34px;
+      border-radius: 8px;
+      text-decoration: none;
+      box-shadow: 0 4px 24px rgba(255,60,60,0.3);
+      transition: opacity 0.2s, transform 0.15s;
+    }
+
+    .download-btn:hover { opacity: 0.9; transform: translateY(-2px); }
+    .download-btn:active { transform: translateY(0); }
+
+    footer {
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.78rem;
+      padding: 24px;
+      border-top: 1px solid var(--border);
+    }
+
+    @media (max-width: 480px) {
+      .stats-bar { gap: 24px; }
+      .stat-num { font-size: 1.3rem; }
+    }
+  </style>
 </head>
-<body class="bg-slate-900 text-slate-100 font-sans antialiased">
+<body>
 
-    <!-- Hero Section -->
-    <header class="max-w-4xl mx-auto px-6 pt-20 pb-16 text-center">
-        <span class="text-amber-400 font-semibold tracking-wider uppercase text-sm bg-amber-400/10 px-3 py-1 rounded-full">Limited Time Offer</span>
-        <h1 class="text-4xl md:text-6xl font-black tracking-tight mt-6 mb-6 leading-tight">
-            Stop Screaming into the Void.<br><span class="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-500">Start Dominating the Feed.</span>
-        </h1>
-        <p class="text-lg md:text-xl text-slate-400 max-w-2xl mx-auto mb-8">
-            The exact, no-BS framework to engineer viral growth, build a hyper-engaged audience, and turn views into a full-time income.
-        </p>
-        
-        <!-- Price Tag -->
-        <div class="bg-slate-800/80 border border-slate-700 rounded-2xl p-6 max-w-sm mx-auto mb-8 shadow-xl">
-            <p class="text-sm text-slate-400 line-through mb-1">Regular Price: $27</p>
-            <p class="text-3xl font-bold text-white">Today's Price: <span class="text-amber-400">$7</span></p>
-            <p class="text-xs text-slate-500 mt-2">One-time payment. Lifetime access.</p>
-        </div>
+<!-- HERO -->
+<section class="hero">
+  <div class="badge">âš¡ Limited Time</div>
+  <h1>Stop Screaming<br>into the Void.<br><span>Start Dominating the Feed.</span></h1>
+  <p class="hero-sub">The exact, no-BS framework to engineer viral growth, build a hyper-engaged audience, and turn views into a full-time income.</p>
+  <div class="price-block">
+    <span class="price-old">$27</span>
+    <span class="price-new">$7</span>
+    <span style="color:var(--muted);font-size:.85rem;">one-time Â· lifetime access</span>
+  </div>
+  <a href="#offer" class="cta-btn">BUY NOW â€” $7</a>
+</section>
 
-        <button onclick="openModalOnly()" class="w-full sm:w-auto bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-slate-950 font-bold text-lg px-8 py-4 rounded-xl shadow-lg shadow-orange-500/20 transform hover:-translate-y-0.5 transition active:translate-y-0">
-            BUY NOW — $7
-        </button>
-    </header>
+<!-- LIVE STATS -->
+<div class="stats-bar">
+  <div class="stat">
+    <div class="stat-num" id="views-count">â€”</div>
+    <div class="stat-label">Total Views</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num" id="downloads-count">â€”</div>
+    <div class="stat-label">Total Downloads</div>
+  </div>
+</div>
 
-    <hr class="border-slate-800 max-w-4xl mx-auto">
-
-    <!-- Problem Section -->
-    <section class="max-w-3xl mx-auto px-6 py-16">
-        <h2 class="text-2xl md:text-3xl font-bold text-center mb-6">Why 99% of Creators Stay Invisible...</h2>
-        <p class="text-slate-400 text-center leading-relaxed text-base md:text-lg">
-            You’re posting consistently. You’re editing for hours. But your view count is stuck in double digits. The algorithms aren't broken—your strategy is. You don't need luck; you need a system.
-        </p>
-    </section>
-
-    <!-- Inside the Book -->
-    <section class="bg-slate-800/40 border-y border-slate-800/60 py-16 px-6">
-        <div class="max-w-4xl mx-auto">
-            <h3 class="text-xl font-bold uppercase tracking-wider text-center text-slate-400 mb-10">What's Inside the E-Book</h3>
-            <div class="grid md:grid-cols-3 gap-8">
-                <div class="bg-slate-800/60 border border-slate-700/50 p-6 rounded-xl">
-                    <div class="text-amber-400 text-2xl mb-3">🔥</div>
-                    <h4 class="text-lg font-semibold mb-2">The Viral Blueprint</h4>
-                    <p class="text-sm text-slate-400">How to hook viewers in the first 2 seconds before they swipe away entirely.</p>
-                </div>
-                <div class="bg-slate-800/60 border border-slate-700/50 p-6 rounded-xl">
-                    <div class="text-amber-400 text-2xl mb-3">⚙️</div>
-                    <h4 class="text-lg font-semibold mb-2">The Algorithm Hack</h4>
-                    <p class="text-sm text-slate-400">The core psychological triggers that force platforms to push your content to millions.</p>
-                </div>
-                <div class="bg-slate-800/60 border border-slate-700/50 p-6 rounded-xl">
-                    <div class="text-amber-400 text-2xl mb-3">💰</div>
-                    <h4 class="text-lg font-semibold mb-2">Monetization Secrets</h4>
-                    <p class="text-sm text-slate-400">Leverage your views into real digital assets so you never have to go back to a boring 9-to-5.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Bottom CTA -->
-    <section class="max-w-4xl mx-auto px-6 py-20 text-center">
-        <h3 class="text-2xl md:text-3xl font-bold mb-4">Ready to change your digital trajectory?</h3>
-        <p class="text-slate-400 mb-8 max-w-md mx-auto">Get instant access to the framework today for the price of a coffee.</p>
-        <button onclick="openModalOnly()" class="w-full sm:w-auto bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white font-bold text-lg px-8 py-4 rounded-xl transition">
-            INSTANT ACCESS FOR $7
-        </button>
-    </section>
-
-    <!-- The Popup Modal -->
-    <div id="cryptoModal" class="modal opacity-0 pointer-events-none fixed w-full h-full top-0 left-0 flex items-center justify-center z-50">
-        <div class="modal-overlay absolute w-full h-full bg-slate-950/80 backdrop-blur-sm"></div>
-        
-        <div class="modal-container bg-slate-800 w-11/12 md:max-w-md mx-auto rounded-2xl shadow-2xl z-50 overflow-y-auto border border-slate-700 transform scale-95 transition-transform duration-300">
-            <div class="modal-content py-6 text-left px-6">
-                <div class="flex justify-between items-center pb-4 border-b border-slate-700">
-                    <p class="text-2xl font-black text-amber-400">🎉 You're Early! It's On Us.</p>
-                </div>
-                <p class="my-4 text-slate-300 leading-relaxed text-sm">
-                    We are currently finalizing our local automated payment gateways. Because you are one of our first action-takers and showed genuine intent to invest in your growth, you get the entire e-book <strong>100% Free</strong> today instead of $7.
-                </p>
-                
-                <!-- Direct Download Link tracking actual downloads -->
-                <a href="https://drive.google.com/uc?export=download&id=1n5r_bIeR0xl1TosMkXgtzy3NqgVdhIwN" 
-                   target="_blank" 
-                   onclick="trackClick()"
-                   class="block text-center w-full bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-slate-950 font-bold py-3 rounded-xl shadow-lg mt-6 transition">
-                    Download "The Algorithm Code.pdf"
-                </a>
-            </div>
-        </div>
+<!-- FEATURES -->
+<div class="section">
+  <div class="section-title">What's Inside the E-Book</div>
+  <div class="features">
+    <div class="feature-card">
+      <div class="feature-icon">ðŸ”¥</div>
+      <div>
+        <div class="feature-title">The Viral Blueprint</div>
+        <div class="feature-desc">How to hook viewers in the first 2 seconds before they swipe away entirely.</div>
+      </div>
     </div>
-
-    <!-- Secret Stats Dashboard Overlay Menu -->
-    <div id="adminPanel" class="hidden fixed bottom-4 right-4 bg-slate-800 border border-slate-700 p-4 rounded-xl shadow-2xl z-50 text-xs">
-        <p class="font-bold text-amber-400 mb-1">Live Global Stats</p>
-        <p>Total Views: <span id="viewCount" class="text-white font-mono">Loading...</span></p>
-        <p>Total Downloads: <span id="downloadCount" class="text-white font-mono">Loading...</span></p>
+    <div class="feature-card">
+      <div class="feature-icon">âš™ï¸</div>
+      <div>
+        <div class="feature-title">The Algorithm Hack</div>
+        <div class="feature-desc">The core psychological triggers that force platforms to push your content to millions.</div>
+      </div>
     </div>
+    <div class="feature-card">
+      <div class="feature-icon">ðŸ’°</div>
+      <div>
+        <div class="feature-title">Monetization Secrets</div>
+        <div class="feature-desc">Leverage your views into real digital assets so you never have to go back to a boring 9-to-5.</div>
+      </div>
+    </div>
+  </div>
+</div>
 
-    <!-- Free Global API Tracking Logic -->
-    <script>
-        // ⚠️ CHANGE THIS STRiNG TO ANYTHING UNIQUE TO PROTECT YOUR DATABASE
-        const uniqueKey = "viral_tracker_croco2026"; 
+<!-- FREE OFFER -->
+<div class="section" style="padding-top:0" id="offer">
+  <div class="offer-card">
+    <div class="offer-badge">ðŸŽ‰ You're Early â€” It's On Us</div>
+    <h2>Get the Full E-Book Free Today</h2>
+    <p>We're finalizing our payment gateway. Because you showed up early and took action, you get the entire e-book <strong style="color:var(--text)">100% Free</strong> â€” no card, no catch.</p>
+    <a href="https://drive.google.com/uc?export=download&id=1n5r_bIeR0xl1TosMkXgtzy3NqgVdhIwN"
+       class="download-btn"
+       id="download-link"
+       onclick="trackDownload()">
+      â¬‡ï¸ Download "The Algorithm Code" â€” Free
+    </a>
+  </div>
+</div>
 
-        // 1. Log Global Views on Load
-        window.addEventListener('DOMContentLoaded', () => {
-            fetch(`https://api.countapi.xyz/hit/${uniqueKey}/views`)
-                .then(res => res.json())
-                .then(data => { if(document.getElementById('viewCount')) document.getElementById('viewCount').innerText = data.value; });
-                
-            // Fetch download count to populate the display menu
-            fetch(`https://api.countapi.xyz/get/${uniqueKey}/downloads`)
-                .then(res => res.json())
-                .then(data => { if(document.getElementById('downloadCount')) document.getElementById('downloadCount').innerText = data.value || 0; })
-                .catch(() => { if(document.getElementById('downloadCount')) document.getElementById('downloadCount').innerText = 0; });
-        });
+<footer>Â© 2025 Go Viral or Go Back Home Â· All rights reserved</footer>
 
-        // 2. Open Modal Logic
-        function openModalOnly() {
-            const modal = document.getElementById('cryptoModal');
-            modal.classList.remove('opacity-0', 'pointer-events-none');
-            modal.querySelector('.modal-container').classList.remove('scale-95');
-            modal.querySelector('.modal-container').classList.add('scale-100');
-            document.body.classList.add('modal-active');
-        }
+<script>
+  // â”€â”€ CONFIG â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // Uses CountAPI (countapi.xyz) â€” free, no signup, no backend needed.
+  // Replace "gogo-viral" with your own unique namespace if you want.
+  const NAMESPACE = "gogo-viral-youcef";
+  const VIEWS_KEY = "page-views";
+  const DOWNLOADS_KEY = "downloads";
+  const API = "https://api.countapi.xyz";
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
-        // 3. Log Global Downloads on Final Click
-        function trackClick() {
-            fetch(`https://api.countapi.xyz/hit/${uniqueKey}/downloads`)
-                .then(res => res.json())
-                .then(data => { if(document.getElementById('downloadCount')) document.getElementById('downloadCount').innerText = data.value; });
-        }
+  function fmt(n) {
+    if (n >= 1000) return (n / 1000).toFixed(1).replace(/\.0$/, '') + 'k';
+    return n.toString();
+  }
 
-        // 4. Secret Dashboard Gesture: Quick triple-tap on the background toggles the overlay panel
-        let tapCount = 0;
-        window.addEventListener('click', (e) => {
-            if (e.target.tagName === 'BODY' || e.target.tagName === 'HEADER' || e.target.tagName === 'SECTION') {
-                tapCount++;
-                if (tapCount === 3) {
-                    const panel = document.getElementById('adminPanel');
-                    panel.classList.toggle('hidden');
-                    tapCount = 0;
-                }
-                setTimeout(() => { tapCount = 0; }, 1000);
-            }
-        });
-    </script>
+  async function hitCounter(key) {
+    try {
+      const res = await fetch(`${API}/hit/${NAMESPACE}/${key}`);
+      const data = await res.json();
+      return data.value;
+    } catch { return null; }
+  }
+
+  async function getCounter(key) {
+    try {
+      const res = await fetch(`${API}/get/${NAMESPACE}/${key}`);
+      const data = await res.json();
+      return data.value;
+    } catch { return null; }
+  }
+
+  async function trackDownload() {
+    const n = await hitCounter(DOWNLOADS_KEY);
+    if (n !== null) {
+      document.getElementById('downloads-count').textContent = fmt(n);
+    }
+  }
+
+  async function initCounters() {
+    // Hit the view counter on page load
+    const views = await hitCounter(VIEWS_KEY);
+    const downloads = await getCounter(DOWNLOADS_KEY);
+
+    if (views !== null)
+      document.getElementById('views-count').textContent = fmt(views);
+    if (downloads !== null)
+      document.getElementById('downloads-count').textContent = fmt(downloads ?? 0);
+  }
+
+  initCounters();
+</script>
 </body>
 </html>
